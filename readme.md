@@ -1,116 +1,49 @@
-# 🧠 Mini Compilador em Node.js + TypeScript
+#  Mini-Compiler Teste & Validação
 
-Este projecto consiste no desenvolvimento de um **mini compilador**, implementado em **Node.js utilizando TypeScript**, com o objectivo de demonstrar, de forma prática e didáctica, os principais conceitos envolvidos no processo de compilação de uma linguagem de programação.
+Este projeto é um compilador modular desenvolvido em **TypeScript**, focado na análise léxica, sintática e semântica de uma linguagem simples. Inclui uma suite de testes automatizada para validar o comportamento do compilador em diferentes cenários.
 
-O compilador foi concebido de forma **modular**, sendo dividido em **três módulos fundamentais**:
+## 🛠 Estrutura do Projeto
 
-* **Analisador Léxico**
-* **Analisador Sintático**
-* **Analisador Semântico**
+O compilador está dividido em fases independentes:
+- **Lexer**: Transforma o código fonte em tokens.
+- **Parser**: Constrói a árvore de sintaxe abstrata (AST) a partir dos tokens.
+- **Semantic Analyzer**: Valida a lógica do programa (ex: declaração de variáveis).
+- **Executor**: Script de automação que valida os casos de sucesso e erro.
 
-Cada módulo desempenha um papel específico no processo de análise e execução do código-fonte, seguindo a arquitectura clássica de compiladores.
+##  Pré-requisitos
 
----
+Antes de começar, certifique-se de que tem instalado:
+- [Node.js](https://nodejs.org/) (Versão 16 ou superior)
+- [npm](https://www.npmjs.com/) ou [yarn](https://yarnpkg.com/)
 
-## 🎯 Objectivos do Projecto
+##  Como Executar
 
-* Compreender o funcionamento interno de um compilador
-* Implementar um analisador léxico para geração de tokens
-* Implementar um analisador sintático baseado em gramática simples
-* Realizar análise semântica com verificação de regras e execução
-* Aplicar conceitos de árvores sintáticas (AST)
-* Utilizar Node.js e TypeScript em um projecto estruturado
+### 1. Instalar as Dependências
+No terminal, na raiz do projeto, instale o TypeScript e o motor de execução:
+```bash
+npm install
 
----
+2. Rodar a Suite de Testes Automática
+node executor.js
 
-## 🧩 Estrutura do Compilador
+ 3. Casos de Teste Automatizados:
+ O sistema valida automaticamente quatro cenários críticos:
 
-O mini compilador segue o seguinte fluxo de funcionamento:
+Erro Léxico: Identificação de caracteres inválidos (ex: @).
 
-1. **Análise Léxica**
-   O código-fonte é lido caractere por caractere e transformado em uma sequência de tokens.
+Erro Sintático: Identificação de comandos mal formados (ex: let = 10;).
 
-2. **Análise Sintática**
-   Os tokens são analisados de acordo com regras gramaticais, gerando uma **Árvore Sintática Abstrata (AST)**.
+Erro Semântico: Uso de variáveis não declaradas (ex: x = 5; sem let).
 
-3. **Análise Semântica**
-   A AST é percorrida para verificar regras semânticas, como declaração de variáveis, e para executar o programa.
+Sucesso Completo: Validação de um programa funcional completo.
 
----
+📁 Organização de Pastas:
+├── src/
+│   ├── lexer/       # Lógica do Analisador Léxico
+│   ├── parser/      # Lógica do Analisador Sintático
+│   ├── semantic/    # Lógica do Analisador Semântico
+│   ├── input/       # Ficheiros de teste (gerados pelo executor)
+│   └── index.ts     # Ponto de entrada do compilador
+├── executor.js      # Runner automático de testes
+└── README.md        # Documentação do projeto
 
-## 🛠️ Tecnologias Utilizadas
-
-* **Node.js** – Ambiente de execução
-* **TypeScript** – Linguagem principal do projecto
-* **Programação Orientada a Objectos**
-* **Arquitectura Modular**
-
----
-
-## 📂 Estrutura do Projecto
-
-```
-mini-compiler/
-│── src/
-|   ├── input/        # código fonte a ser lido 
-│   ├── lexer/        # Analisador Léxico
-│   ├── parser/       # Analisador Sintático
-│   ├── semantic/     # Analisador Semântico
-│   └── index.ts      # Ponto de entrada
-│
-├── package.json
-├── tsconfig.json
-└── README.md
-```
-
----
-
-## 📚 Linguagem Suportada (Simplificada)
-
-A linguagem implementada no projecto suporta:
-
-* Declaração de variáveis
-* Atribuição de valores
-* Operações aritméticas simples
-* Comando de saída (`print`)
-
-### Exemplo de código:
-
-```
-let x = 10;
-let y = x + 20;
-print y;
-```
-
----
-
-## 🧪 Finalidade Académica
-
-Este mini compilador **tem como objectivo** :
-
-* Facilitar a compreensão dos conceitos teóricos
-* Demonstrar a aplicação prática dos módulos de um compilador
-* Servir como base para extensões futuras, como:
-
-  * Condicionais (`if`)
-  * Laços (`while`)
-  * Tipos de dados
-  * Geração de código intermediário
-
----
-
-## 🚀 Possíveis Evoluções
-
-* Implementação de uma gramática mais completa
-* Separação entre análise semântica e execução
-* Geração de bytecode ou código intermediário
-* Interface gráfica ou Web
-* Integração com testes automatizados
-
----
-
-## 👨‍💻 Público-Alvo
-
-* Estudantes de Engenharia Informática
-
----

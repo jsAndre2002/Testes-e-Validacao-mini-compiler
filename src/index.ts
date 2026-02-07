@@ -1,28 +1,43 @@
-import Lexer from "./lexer/Lexer";
-import Parser from "./parser/Parser";
-import SemanticAnalyzer from "./semantic/Semantic";
-import fs from "fs";
-import path from "path";
+import * as fs from 'fs';
+import * as path from 'path';
+import Lexer from './lexer/Lexer'; 
+import Parser from './parser/Parser'; 
+import SemanticAnalyzer from './semantic/Semantic';
 
-
-const argumentPath = process.argv[2];
-const defaultPath = path.join(__dirname, "input", "code.nt");
-
-const filePath = argumentPath ? path.resolve(argumentPath) : defaultPath;
+const args = process.argv.slice(2);
+const filePath = args[0];
+const targetStage = args[1] || 'full'; 
 
 try {
-    const code = fs.readFileSync(filePath, "utf-8");
-    console.log(`\n📄 Processando arquivo: ${path.basename(filePath)}`);
+    if (!filePath) throw new Error("Caminho do ficheiro nao fornecido.");
+    const absolutePath = path.resolve(filePath);
+    const inputCode = fs.readFileSync(absolutePath, 'utf-8');
 
-    const lexer = new Lexer(code);
+    // Inicializa o motor
+    const lexer = new Lexer(inputCode);
+
+    if (targetStage === 'lexer') {
+        while (lexer.getNextToken().type !== 'EOF'); // Apenas valida se o Lexer explode
+        console.log("SUCESSO: Fase Lexica validada.");
+        process.exit(0);
+    }
+
     const parser = new Parser(lexer);
     const ast = parser.parse();
 
-    const semantic = new SemanticAnalyzer();
-    semantic.execute(ast);
+    if (targetStage === 'parser') {
+        console.log("SUCESSO: Fase Sintatica validada.");
+        process.exit(0);
+    }
+
+    const analyzer = new SemanticAnalyzer();
+    analyzer.execute(ast);
     
-    console.log("✅ Analise concluída com sucesso!");
-} catch (err: any) {
-    console.error(`\n❌ Erro no Compilador: ${err.message}`);
-    process.exit(1); 
+    console.log("SUCESSO: Compilacao Completa.");
+    process.exit(0);
+
+} catch (error: any) {
+    // IMPORTANTE: O executor.js espera ver a palavra ERRO no início
+    console.error(`ERRO: ${error.message}`);
+    process.exit(1);
 }

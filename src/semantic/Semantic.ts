@@ -1,49 +1,57 @@
 import ASTNode from "../parser/IParser";
 
+export class SemanticAnalyzer {
+    // Tabela de símbolos para guardar as variáveis declaradas
+    private symbolTable: Set<string> = new Set();
 
-class SemanticAnalyzer {
-
-  private simbols : Record<string,number> = {}
-
-  public execute(ast:ASTNode[]){
-    for(const node of ast){
-        this.visit(node);
+    public execute(ast: ASTNode[]): void {
+        for (const node of ast) {
+            this.visit(node);
+        }
     }
-  }
-  private visit(node : ASTNode):any{
-    switch(node.type){
-        case "VariableDeclaration":
-            const value = this.visit(node.value);
-            this.simbols[node.id] = value
-            break;
 
-        case "PrintStatement":
-             console.log(this.visit(node.value))
-            break;
-
-        case "NumberLiteral":
-            return node.value;
-
-        case "Identifier":
-            if(!(node.name in this.simbols)){
-                throw new Error(`Erro semântico: variavel ${node.name} não foi declarada`);
-            }
-            return this.simbols[node.name];
-        case "BinaryExpression":
-                switch(node.operator){
-                    case "+" : return this.visit(node.left) + this.visit(node.right);
-                    case "-" : return this.visit(node.left) - this.visit(node.right);
-                    case "*" : return this.visit(node.left) * this.visit(node.right);
-                    case "/" : 
-                            if(this.visit(node.right) === 0){
-                                throw new Error(`Expressão mal definida: ${this.visit(node.left)} ${node.operator} ${this.visit(node.right)} . Não é possível dividir por zero`);
-                            }
-                            return this.visit(node.left) / this.visit(node.right);
+    private visit(node: ASTNode): void {
+        switch (node.type) {
+            case "VariableDeclaration":
+                // Ao encontrar 'let x = ...', adicionamos 'x' à tabela
+                if (node.id) {
+                    this.symbolTable.add(node.id);
                 }
-            break; 
-     
+                if (node.value) this.visit(node.value);
+                break;
+
+            case "Assignment":
+                // Erro aqui: se tentar atribuir a algo que não está na tabela
+                if (node.id && !this.symbolTable.has(node.id)) {
+                    throw new Error(`Variavel nao declarada: ${node.id}`);
+                }
+                if (node.value) this.visit(node.value);
+                break;
+
+            case "Identifier":
+                // Erro aqui: se tentar usar uma variável num print ou expressão sem declarar
+                if (node.name && !this.symbolTable.has(node.name)) {
+                    throw new Error(`Variavel nao declarada: ${node.name}`);
+                }
+                break;
+
+            case "PrintStatement":
+                if (node.value) this.visit(node.value);
+                break;
+
+            case "BinaryExpression":
+                if (node.left) this.visit(node.left);
+                if (node.right) this.visit(node.right);
+                break;
+
+            case "NumberLiteral":
+                break;
+
+            default:
+                // Se houver sub-nós não mapeados, visitamos recursivamente
+                break;
+        }
     }
-  }
 }
 
 export default SemanticAnalyzer;
